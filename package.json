@@ -1,0 +1,83 @@
+{
+  "name": "md-path-mentions",
+  "displayName": "MD Path Mentions",
+  "description": "@-упоминания файлов и папок проекта в markdown",
+  "version": "0.0.1",
+  "publisher": "Yakub",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/NereonNeo/markdown-autocomplete"
+  },
+  "keywords": [
+    "markdown",
+    "autocomplete",
+    "path",
+    "mention",
+    "prompt"
+  ],
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onLanguage:markdown"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "mdPathMentions.rebuildIndex",
+        "title": "MD Path Mentions: Rebuild Index"
+      }
+    ],
+    "configuration": {
+      "title": "MD Path Mentions",
+      "properties": {
+        "mdPathMentions.excludeGlobs": {
+          "type": "array",
+          "default": [
+            "**/node_modules/**",
+            "**/.git/**",
+            "**/dist/**",
+            "**/out/**",
+            "**/build/**"
+          ],
+          "description": "Glob-паттерны, исключаемые из индекса"
+        },
+        "mdPathMentions.maxFiles": {
+          "type": "number",
+          "default": 8000,
+          "description": "Лимит файлов в индексе"
+        },
+        "mdPathMentions.includeDirectories": {
+          "type": "boolean",
+          "default": true,
+          "description": "Показывать директории в автокомплите"
+        },
+        "mdPathMentions.maxSuggestions": {
+          "type": "number",
+          "default": 300,
+          "description": "Максимальное число вариантов в списке автокомплита за один запрос"
+        },
+        "mdPathMentions.trace": {
+          "type": "boolean",
+          "default": false,
+          "description": "Подробные debug-логи в Output-канале 'MD Path Mentions' (для диагностики проблем)"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./"
+  },
+  "devDependencies": {
+    "@types/node": "^20.19.43",
+    "@types/vscode": "^1.85.0",
+    "typescript": "^5.4.0"
+  }
+}
