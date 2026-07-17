@@ -1,4 +1,4 @@
-# MD Path Mentions
+# MD Path Mentions Autocomplete
 
 Автокомплит путей файлов и папок проекта по символу `@` в markdown-файлах — удобно для вставки ссылок на файлы в промпты, заметки и документацию.
 
@@ -11,13 +11,13 @@
 
 ## Настройки
 
-| Настройка | По умолчанию | Описание |
-| --- | --- | --- |
-| `mdPathMentions.excludeGlobs` | `["**/node_modules/**", "**/.git/**", "**/dist/**", "**/out/**", "**/build/**"]` | Glob-паттерны, исключаемые из индекса |
-| `mdPathMentions.maxFiles` | `8000` | Лимит файлов в индексе |
-| `mdPathMentions.includeDirectories` | `true` | Показывать директории в автокомплите |
-| `mdPathMentions.maxSuggestions` | `300` | Максимум вариантов в списке за один запрос |
-| `mdPathMentions.trace` | `false` | Подробные debug-логи в Output-канале `MD Path Mentions` |
+| Настройка                           | По умолчанию                                                                     | Описание                                                |
+| ----------------------------------- | -------------------------------------------------------------------------------- | ------------------------------------------------------- |
+| `mdPathMentions.excludeGlobs`       | `["**/node_modules/**", "**/.git/**", "**/dist/**", "**/out/**", "**/build/**"]` | Glob-паттерны, исключаемые из индекса                   |
+| `mdPathMentions.maxFiles`           | `8000`                                                                           | Лимит файлов в индексе                                  |
+| `mdPathMentions.includeDirectories` | `true`                                                                           | Показывать директории в автокомплите                    |
+| `mdPathMentions.maxSuggestions`     | `300`                                                                            | Максимум вариантов в списке за один запрос              |
+| `mdPathMentions.trace`              | `false`                                                                          | Подробные debug-логи в Output-канале `MD Path Mentions` |
 
 ## Команды
 

@@ -1,6 +1,6 @@
 {
-  "name": "md-path-mentions",
-  "displayName": "MD Path Mentions",
+  "name": "md-path-mentions-autocomplete",
+  "displayName": "MD Path Mentions Autocomplete",
   "description": "@-упоминания файлов и папок проекта в markdown",
   "version": "0.0.1",
   "publisher": "Yakub",
