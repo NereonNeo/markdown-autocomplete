@@ -1,9 +1,10 @@
 {
   "name": "md-path-mentions-autocomplete",
-  "displayName": "MD Path Mentions Autocomplete",
-  "description": "@-упоминания файлов и папок проекта в markdown",
-  "version": "0.0.1",
+  "displayName": "MD Path Mentions: AI Prompt File Links",
+  "description": "Type @ in markdown to precisely reference a project file or folder — no more typos in paths for AI prompts",
+  "version": "0.1.1",
   "publisher": "Yakub",
+  "icon": "assets/logo.png",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -14,13 +15,22 @@
     "autocomplete",
     "path",
     "mention",
-    "prompt"
+    "prompt",
+    "ai",
+    "llm",
+    "prompt-engineering",
+    "context",
+    "cursor",
+    "copilot",
+    "chatgpt",
+    "claude"
   ],
   "engines": {
     "vscode": "^1.85.0"
   },
   "categories": [
-    "Other"
+    "Other",
+    "Chat"
   ],
   "activationEvents": [
     "onLanguage:markdown"
@@ -45,33 +55,34 @@
             "**/out/**",
             "**/build/**"
           ],
-          "description": "Glob-паттерны, исключаемые из индекса"
+          "description": "Glob patterns excluded from the index"
         },
         "mdPathMentions.maxFiles": {
           "type": "number",
           "default": 8000,
-          "description": "Лимит файлов в индексе"
+          "description": "Limit of files in the index"
         },
         "mdPathMentions.includeDirectories": {
           "type": "boolean",
           "default": true,
-          "description": "Показывать директории в автокомплите"
+          "description": "Show directories in the autocomplete list"
         },
         "mdPathMentions.maxSuggestions": {
           "type": "number",
           "default": 300,
-          "description": "Максимальное число вариантов в списке автокомплита за один запрос"
+          "description": "Maximum number of suggestions shown per autocomplete query"
         },
         "mdPathMentions.trace": {
           "type": "boolean",
           "default": false,
-          "description": "Подробные debug-логи в Output-канале 'MD Path Mentions' (для диагностики проблем)"
+          "description": "Verbose debug logs in the 'MD Path Mentions' Output channel (for troubleshooting)"
         }
       }
     }
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",
+    "package": "vsce package",
     "compile": "tsc -p ./",
     "watch": "tsc -watch -p ./"
   },

@@ -1,12 +1,12 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
 
-// Регэксп для триггера: символ @ и то, что после него до курсора
-// (буквы, цифры, /, ., -, _) — то есть похоже на путь
+// Trigger regex: the @ character plus whatever follows it up to the cursor
+// (letters, digits, /, ., -, _) — i.e. something that looks like a path
 const MENTION_RE = /@([\w./-]*)$/;
 
-// Символы перед "@", после которых мы считаем это упоминанием пути,
-// а не частью слова — так `email@example.com` не триггерит автокомплит
+// Characters allowed right before "@" for it to count as a path mention
+// rather than part of a word — this keeps `email@example.com` from triggering
 const ALLOWED_CHAR_BEFORE_RE = /[\s([{"'`*_-]/;
 
 const MAX_SUGGESTIONS_DEFAULT = 300;
@@ -41,7 +41,7 @@ class FileIndexer {
   }
 
   async build(): Promise<void> {
-    // не даём двум построениям индекса выполняться параллельно
+    // don't let two index builds run in parallel
     if (this.building) {
       return this.building;
     }
@@ -67,8 +67,8 @@ class FileIndexer {
       entries.push({ path: rel, lowerPath: rel.toLowerCase(), kind: vscode.CompletionItemKind.File });
 
       if (includeDirectories) {
-        // накапливаем все промежуточные директории пути,
-        // чтобы "src/components/Foo.tsx" дал и "src", и "src/components"
+        // accumulate every intermediate directory of the path,
+        // so "src/components/Foo.tsx" yields both "src" and "src/components"
         let dir = path.dirname(rel);
         while (dir && dir !== '.' && !dirs.has(dir)) {
           dirs.add(dir);
@@ -83,11 +83,11 @@ class FileIndexer {
 
     this.entries = entries;
     this.output.appendLine(
-      `[md-path-mentions] Индекс: ${uris.length} файлов, ${dirs.size} директорий`
+      `[md-path-mentions] Index: ${uris.length} files, ${dirs.size} directories`
     );
   }
 
-  // дебаунс: FileSystemWatcher может стрелять пачками при git checkout/npm install
+  // debounce: FileSystemWatcher can fire in bursts on git checkout/npm install
   scheduleRebuild() {
     if (this.rebuildTimer) {
       clearTimeout(this.rebuildTimer);
@@ -101,7 +101,7 @@ class FileIndexer {
     const watcher = vscode.workspace.createFileSystemWatcher('**/*');
     watcher.onDidCreate(() => this.scheduleRebuild());
     watcher.onDidDelete(() => this.scheduleRebuild());
-    // onDidChange не подписываем — переименования/содержимое не меняют список путей
+    // not subscribing to onDidChange — content edits don't change the path list
     context.subscriptions.push(watcher);
 
     const configWatcher = vscode.workspace.onDidChangeConfiguration((e) => {
@@ -112,9 +112,9 @@ class FileIndexer {
     context.subscriptions.push(configWatcher);
   }
 
-  // Возвращает записи, отфильтрованные по уже введённому тексту, без
-  // материализации CompletionItem — фильтрация по строке намного дешевле,
-  // чем создание объектов для всего индекса на каждое нажатие клавиши.
+  // Returns entries filtered by the already-typed text, without
+  // materializing CompletionItems — string filtering is much cheaper
+  // than creating objects for the whole index on every keystroke.
   queryEntries(typed: string, maxResults: number): { entries: IndexEntry[]; truncated: boolean } {
     const needle = typed.toLowerCase();
     const matched: IndexEntry[] = [];
@@ -157,15 +157,15 @@ class PathCompletionProvider implements vscode.CompletionItemProvider {
       return undefined;
     }
 
-    // не триггеримся посреди слова/email — только после пробела, начала
-    // строки или одного из "открывающих" символов
+    // don't trigger in the middle of a word/email — only after whitespace,
+    // start of line, or one of the "opening" characters
     const charBeforeAtIndex = linePrefix.length - match[0].length - 1;
     const charBeforeAt = charBeforeAtIndex >= 0 ? linePrefix[charBeforeAtIndex] : undefined;
     if (charBeforeAt !== undefined && !ALLOWED_CHAR_BEFORE_RE.test(charBeforeAt)) {
       return undefined;
     }
 
-    const typed = match[1]; // без "@" — само слово-путь после него
+    const typed = match[1]; // without "@" — just the path text after it
     const range = new vscode.Range(position.translate(0, -typed.length), position);
 
     const maxResults = vscode.workspace
@@ -180,12 +180,12 @@ class PathCompletionProvider implements vscode.CompletionItemProvider {
       item.insertText = p;
       item.filterText = p;
       item.range = range;
-      item.detail = kind === vscode.CompletionItemKind.Folder ? 'папка' : undefined;
+      item.detail = kind === vscode.CompletionItemKind.Folder ? 'folder' : undefined;
       return item;
     });
 
-    // isIncomplete=true сообщает VSCode перезапросить провайдера при
-    // дальнейшем вводе, а не фильтровать усечённый список на клиенте
+    // isIncomplete=true tells VSCode to re-query the provider on further
+    // typing instead of filtering the truncated list client-side
     return new vscode.CompletionList(items, truncated);
   }
 }
@@ -205,11 +205,11 @@ export function activate(context: vscode.ExtensionContext) {
   );
   context.subscriptions.push(provider);
 
-  // команда для ручного форс-ребилда индекса, если что-то разъехалось
+  // command to manually force-rebuild the index if something got out of sync
   context.subscriptions.push(
     vscode.commands.registerCommand('mdPathMentions.rebuildIndex', async () => {
       await indexer.build();
-      vscode.window.showInformationMessage('MD Path Mentions: индекс пересобран');
+      vscode.window.showInformationMessage('MD Path Mentions: index rebuilt');
     })
   );
 }
